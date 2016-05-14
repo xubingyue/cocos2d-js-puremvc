@@ -1,0 +1,5 @@
+frameworks/
+node_modules/*
+!node_modules/puremvc/
+!node_modules/ref/
+.idea/
