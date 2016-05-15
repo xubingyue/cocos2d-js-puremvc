@@ -23,11 +23,13 @@ module.exports = puremvc.define(
         },
 
         pushContext: function (context) {
+            cc.log('push context:', context);
             this.data.push(context);
         },
 
         popContext: function () {
-            this.data.pop();
+            cc.log('pos context');
+            return this.data.pop();
         },
 
         getCurrentContext: function () {

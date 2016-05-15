@@ -8,8 +8,8 @@ var Context = cc.Class.extend({
         this.mediatorClass = null;
         this.viewComponentClass = null;
 
-        // viewComponent实例数据
-        this.data = {};
+        // viewComponent初始化数据，用于保存viewComponent状态
+        this.data = data || {};
 
         this.parent = null;
         this.children = [];

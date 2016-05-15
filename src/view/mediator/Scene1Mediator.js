@@ -20,7 +20,9 @@ module.exports = puremvc.define
     {
         /** @override */
         listNotificationInterests: function () {
-            return [];
+            return [
+
+            ];
         },
 
         /** @override */

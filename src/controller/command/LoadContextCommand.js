@@ -5,7 +5,6 @@
 
 var puremvc = require('puremvc').puremvc;
 var Context = require('../../model/vo/Context.js');
-var ContextProxy = require('../../model/proxy/ContextProxy.js');
 
 module.exports = puremvc.define
 (
@@ -25,21 +24,24 @@ module.exports = puremvc.define
             cc.assert(context, 'context should be undefined');
             cc.assert(context instanceof Context, 'should be an instance of context');
 
-            // 获取/创建mediator
+            // 移除原来的mediator
             var mediator = cc.facade.retrieveMediator(context.mediatorClass.NAME);
-            if (!mediator) {
-                mediator = new context.mediatorClass();
-                cc.facade.registerMediator(mediator);
+            if (mediator) {
+                if (mediator.getViewComponent()) {
+                    mediator.getViewComponent().removeFromParent(true);
+                }
+                cc.facade.removeMediator(context.mediatorClass.NAME);
             }
 
-            // 获取/创建viewComponent
-            var viewComponent = mediator.getViewComponent();
-            if (!viewComponent) {
-                viewComponent = new context.viewComponentClass(context.data);
-                mediator.setViewComponent(viewComponent);
-            } else {
-                viewComponent.removeFromParent(false);
-            }
+            // 创建新的mediator
+            mediator = new context.mediatorClass();
+            mediator.context = context;
+
+            // 创建viewComponent
+            var viewComponent = new context.viewComponentClass(context.data);
+            mediator.setViewComponent(viewComponent);
+
+            cc.facade.registerMediator(mediator);
 
             // 加载子控件
             for (var i = 0; i < context.children.length; ++i) {
@@ -47,7 +49,7 @@ module.exports = puremvc.define
                 cc.facade.sendNotification('LoadContextCommand', context.children[i]);
             }
 
-            var contextProxy = cc.facade.retrieveProxy(ContextProxy.NAME);
+            var contextProxy = cc.facade.retrieveProxy(CONST.CONTEXT_PROXY);
             var isScene = viewComponent instanceof cc.Scene;
             if (isScene) {
                 //

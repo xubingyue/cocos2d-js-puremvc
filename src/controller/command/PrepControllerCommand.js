@@ -5,6 +5,9 @@
 
 var puremvc = require('puremvc').puremvc;
 var LoadContextCommand = require('./LoadContextCommand.js');
+var RemoveLayerCommand = require('./RemoveLayerCommand.js');
+var BackSceneCommand = require('./BackSceneCommand.js');
+var StartGameCommand = require('./StartGameCommand.js');
 
 module.exports = puremvc.define
 (
@@ -21,6 +24,9 @@ module.exports = puremvc.define
             cc.log('PrepControllerCommand execute');
 
             this.facade.registerCommand('LoadContextCommand', LoadContextCommand);
+            this.facade.registerCommand('RemoveLayerCommand', RemoveLayerCommand);
+            this.facade.registerCommand('BackSceneCommand', BackSceneCommand);
+            this.facade.registerCommand('StartGameCommand', StartGameCommand);
         }
     },
     // STATIC MEMBERS

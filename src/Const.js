@@ -3,6 +3,15 @@
  */
 'use strict';
 
-var CONST = {
+var SCENE = 1;
 
+var CONST = {
+    CONTEXT_PROXY: 'ContextProxy',
+    LOAD_CONTEXT_COMMAND: 'LoadContextCommand',
+    REMOVE_LAYER_COMMAND: 'RemoveLayerCommand',
+    BACK_SCENE_COMMAND: 'BackSceneCommand',
+
+    NOTIFY: {
+
+    }
 };

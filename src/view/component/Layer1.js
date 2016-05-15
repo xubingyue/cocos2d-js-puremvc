@@ -5,38 +5,50 @@
 var ref = require('ref');
 
 var Layer1 = ref.views.BaseLayer.extend({
-    sprite:null,
-    ctor:function (data) {
-        //////////////////////////////
-        // 1. super init first
+    _label: null,
+    _button: null,
+    _onClick: null,
+
+    ctor: function (data) {
         this._super(data);
 
-        /////////////////////////////
-        // 2. add a menu item with "X" image, which is clicked to quit the program
-        //    you may modify it.
-        // ask the window size
-        var size = cc.winSize;
-
-        /////////////////////////////
-        // 3. add your codes below...
-        // add a label shows "Hello World"
-        // create and initialize a label
-        var helloLabel = new cc.LabelTTF("Hello World", "Arial", 38);
-        // position the label on the center of the screen
-        helloLabel.x = size.width / 2;
-        helloLabel.y = size.height / 2 + 200;
-        // add the label as a child to this layer
-        this.addChild(helloLabel, 5);
-
-        // add "HelloWorld" splash screen"
-        this.sprite = new cc.Sprite(res.HelloWorld_png);
-        this.sprite.attr({
-            x: size.width / 2,
-            y: size.height / 2
-        });
-        this.addChild(this.sprite, 0);
+        this.createView();
+        this.initByData();
 
         return true;
+    },
+
+    createView: function () {
+        var self = this;
+        var size = cc.winSize;
+
+        var title = new ccui.Text("Scene" + SCENE, "Arial", 38);
+        title.x = size.width / 2;
+        title.y = size.height / 2 + 200;
+        this.addChild(title);
+
+        this._label = new cc.LabelTTF("0", "Arial", 38);
+        this._label.x = size.width / 2;
+        this._label.y = size.height / 2 - 200;
+        this._label.zzzz = 10;
+        this.addChild(this._label);
+
+        this._button = new ccui.Button(res.YellowSquare_png);
+        this._button.x = size.width / 2;
+        this._button.y = size.height / 2;
+        this._button.addClickEventListener(function () {
+            self._onClick();
+        });
+        this.addChild(this._button);
+
+        cc.log('ttttt:', this._label.zzzz);
+    },
+
+    initByData: function () {
+        var data = this.getData();
+        if (data.num) {
+            this._label.setString(data.num);
+        }
     }
 });
 
