@@ -9,7 +9,7 @@ var Context = cc.Class.extend({
         this.viewComponentClass = null;
 
         // viewComponent实例参数
-        this.data = {};
+        this.data = data || {};
 
         this.parent = null;
         this.children = [];

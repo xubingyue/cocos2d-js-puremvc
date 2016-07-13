@@ -2,7 +2,7 @@
  * Created by guoxiangyu on 16/5/14.
  */
 
-var Layer1 = cc.Layer.extend({
+var Layer3 = cc.Layer.extend({
     sprite:null,
     ctor:function (data) {
         //////////////////////////////
@@ -19,7 +19,7 @@ var Layer1 = cc.Layer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-        var helloLabel = new cc.LabelTTF("Layer1 - " + data.layerId, "Arial", 38);
+        var helloLabel = new cc.LabelTTF("Layer3 - " + data.layerId, "Arial", 38);
         // position the label on the center of the screen
         helloLabel.x = Math.random() * (size.width - 20) | 0;
         helloLabel.y = Math.random() * size.height | 0;
@@ -30,4 +30,4 @@ var Layer1 = cc.Layer.extend({
     }
 });
 
-module.exports = Layer1;
+module.exports = Layer3;

@@ -3,7 +3,6 @@
  */
 "use strict";
 
-var ref = require('ref');
 var puremvc = require('puremvc').puremvc;
 
 module.exports = puremvc.define

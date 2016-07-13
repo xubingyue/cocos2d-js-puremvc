@@ -69,175 +69,10 @@ cc.game.onStart = function(){
     }, this);
 };
 cc.game.run();
-},{"./src/AppFacade.js":9}],2:[function(require,module,exports){
-
-/**
- * Expose `Emitter`.
- */
-
-if (typeof module !== 'undefined') {
-  module.exports = Emitter;
-}
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
-
-function Emitter(obj) {
-  if (obj) return mixin(obj);
-};
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
-
-function mixin(obj) {
-  for (var key in Emitter.prototype) {
-    obj[key] = Emitter.prototype[key];
-  }
-  return obj;
-}
-
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.on =
-Emitter.prototype.addEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-  (this._callbacks['$' + event] = this._callbacks['$' + event] || [])
-    .push(fn);
-  return this;
-};
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.once = function(event, fn){
-  function on() {
-    this.off(event, on);
-    fn.apply(this, arguments);
-  }
-
-  on.fn = fn;
-  this.on(event, on);
-  return this;
-};
-
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
-Emitter.prototype.off =
-Emitter.prototype.removeListener =
-Emitter.prototype.removeAllListeners =
-Emitter.prototype.removeEventListener = function(event, fn){
-  this._callbacks = this._callbacks || {};
-
-  // all
-  if (0 == arguments.length) {
-    this._callbacks = {};
-    return this;
-  }
-
-  // specific event
-  var callbacks = this._callbacks['$' + event];
-  if (!callbacks) return this;
-
-  // remove all handlers
-  if (1 == arguments.length) {
-    delete this._callbacks['$' + event];
-    return this;
-  }
-
-  // remove specific handler
-  var cb;
-  for (var i = 0; i < callbacks.length; i++) {
-    cb = callbacks[i];
-    if (cb === fn || cb.fn === fn) {
-      callbacks.splice(i, 1);
-      break;
-    }
-  }
-  return this;
-};
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
-
-Emitter.prototype.emit = function(event){
-  this._callbacks = this._callbacks || {};
-  var args = [].slice.call(arguments, 1)
-    , callbacks = this._callbacks['$' + event];
-
-  if (callbacks) {
-    callbacks = callbacks.slice(0);
-    for (var i = 0, len = callbacks.length; i < len; ++i) {
-      callbacks[i].apply(this, args);
-    }
-  }
-
-  return this;
-};
-
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
-Emitter.prototype.listeners = function(event){
-  this._callbacks = this._callbacks || {};
-  return this._callbacks['$' + event] || [];
-};
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
-
-Emitter.prototype.hasListeners = function(event){
-  return !! this.listeners(event).length;
-};
-
-},{}],3:[function(require,module,exports){
+},{"./src/AppFacade.js":5}],2:[function(require,module,exports){
 exports.puremvc = require("./lib/puremvc-1.0.1-mod.js");
 exports.puremvc.statemachine = require("./lib/puremvc-statemachine-1.0-mod.js");
-},{"./lib/puremvc-1.0.1-mod.js":4,"./lib/puremvc-statemachine-1.0-mod.js":5}],4:[function(require,module,exports){
+},{"./lib/puremvc-1.0.1-mod.js":3,"./lib/puremvc-statemachine-1.0-mod.js":4}],3:[function(require,module,exports){
 /**
  * @fileOverview
  * PureMVC JS Native Port by David Foley, Frédéric Saunier, & Alain Duchesneau 
@@ -2695,7 +2530,7 @@ var puremvc =
 
 
 module.exports = puremvc;
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /**
  * @fileOverview
  * PureMVC State Machine Utility JS Native Port by Saad Shams
@@ -3113,66 +2948,7 @@ puremvc.statemachine =
 };
 
 module.exports = puremvc.statemachine;
-},{"./puremvc-1.0.1-mod.js":4}],6:[function(require,module,exports){
-/**
- * Created by guoxiangyu on 16/5/14.
- */
-module.exports.views = require('./views');
-},{"./views":8}],7:[function(require,module,exports){
-/**
- * Created by guoxiangyu on 16/5/14.
- */
-'use strict';
-
-var Emitter = require('component-emitter');
-
-var BaseLayer = cc.Layer.extend({
-    _data: null,
-    _emitter: new Emitter(),
-
-    ctor: function (data) {
-        this._super();
-        cc.log('base layer data:', JSON.stringify(data));
-        this.setData(data);
-        this.createView();
-        this.initByData(data);
-    },
-
-    createView: function () {
-
-    },
-
-    initByData: function (data) {
-
-    },
-
-    getData: function () {
-        return this._data;
-    },
-
-    setData: function (data) {
-        this._data = this._data || {};
-        for (var key in data) {
-            this._data[key] = data[key];
-        }
-    },
-
-    on: function (event, fn) {
-        this._emitter.on(event, fn);
-    },
-
-    emit: function (event) {
-        this._emitter.emit(event);
-    }
-});
-
-module.exports = BaseLayer;
-},{"component-emitter":2}],8:[function(require,module,exports){
-/**
- * Created by guoxiangyu on 16/5/14.
- */
-module.exports.BaseLayer = require('./BaseLayer.js');
-},{"./BaseLayer.js":7}],9:[function(require,module,exports){
+},{"./puremvc-1.0.1-mod.js":3}],5:[function(require,module,exports){
 /**
  * Created by admin on 16/3/13.
  */
@@ -3221,7 +2997,7 @@ var AppFacade = module.exports = puremvc.define(
         NAME: 'AppFacade'
     }
 );
-},{"./controller/command/StartupCommand.js":15,"puremvc":3}],10:[function(require,module,exports){
+},{"./controller/command/StartupCommand.js":12,"puremvc":2}],6:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
@@ -3245,25 +3021,36 @@ module.exports = puremvc.define
             cc.log('LoadContextCommand execute');
 
             var context = notification.getBody();
-            cc.log('context:', JSON.stringify(context.data));
+
             cc.assert(context, 'context should be undefined');
             cc.assert(context instanceof Context, 'should be an instance of context');
 
-            // 获取/创建mediator
+            // 判断是否mediator已经存在，存在则删除该mediator之前的所有mediator
             var mediator = cc.facade.retrieveMediator(context.mediatorClass.NAME);
-            if (!mediator) {
-                mediator = new context.mediatorClass();
-                cc.facade.registerMediator(mediator);
+            if (mediator && mediator.context.parent) {
+                for (var i = 0; i < mediator.context.parent.children.length; ++i) {
+                    var child = mediator.context.parent.children[i];
+                    if (child.mediatorClass.NAME === context.mediatorClass.NAME) {
+                        for (var j = 0; j <= i; ++j) {
+                            var removeChild = mediator.context.parent.children[j];
+                            var removeChildMediator = cc.facade.retrieveMediator(removeChild.mediatorClass.NAME);
+                            if (removeChildMediator.getViewComponent()) {
+                                removeChildMediator.getViewComponent().removeFromParent(true);
+                            }
+                            cc.facade.removeMediator(removeChild.mediatorClass.NAME);
+                        }
+                        mediator.context.parent.children.splice(0, i + 1);
+                        break;
+                    }
+                }
             }
 
-            // 获取/创建viewComponent
-            var viewComponent = mediator.getViewComponent();
-            if (!viewComponent) {
-                viewComponent = new context.viewComponentClass(context.data);
-                mediator.setViewComponent(viewComponent);
-            } else {
-                viewComponent.removeFromParent(false);
-            }
+            //
+            mediator = new context.mediatorClass();
+            mediator.context = context;
+            var viewComponent = new context.viewComponentClass(context.data);
+            mediator.setViewComponent(viewComponent);
+            cc.facade.registerMediator(mediator);
 
             // 加载子控件
             for (var i = 0; i < context.children.length; ++i) {
@@ -3274,22 +3061,33 @@ module.exports = puremvc.define
             var contextProxy = cc.facade.retrieveProxy(ContextProxy.NAME);
             var isScene = viewComponent instanceof cc.Scene;
             if (isScene) {
-                //
-                contextProxy.pushContext(context);
-                cc.director.runScene(viewComponent);
-            } else {
-                // 获取父亲Context
-                var parentContext = context.parent;
-                if (!parentContext) {
-                    parentContext = contextProxy.getCurrentContext();
-                    context.parent = parentContext;
+                // 更换场景需要多传入更换类型参数
+                var type = notification.getType();
+                if (type === Constant.Change_Scene_Type.Push) {
+                    contextProxy.pushContext(context);
+                    cc.director.pushScene(viewComponent);
+                } else if (type === Constant.Change_Scene_Type.Replace) {
+                    // 替换场景，清空context集合
+                    contextProxy.cleanContext();
+                    contextProxy.pushContext(context);
+                    cc.director.runScene(viewComponent);
                 }
+            } else {
+                //// 获取父亲Context
+                //var parentContext = context.parent;
+                //if (!parentContext) {
+                //    parentContext = contextProxy.getCurrentContext();
+                //    context.parent = parentContext;
+                //}
 
                 // 添加到父节点
+                var parentContext = context.parent;
                 var parentMediator = cc.facade.retrieveMediator(parentContext.mediatorClass.NAME);
                 if (parentMediator && parentMediator.getViewComponent()) {
                     parentMediator.getViewComponent().addChild(viewComponent);
                 }
+
+                parentContext.children.push(context);
             }
         }
     },
@@ -3299,7 +3097,7 @@ module.exports = puremvc.define
     }
 );
 
-},{"../../model/proxy/ContextProxy.js":16,"../../model/vo/Context.js":17,"puremvc":3}],11:[function(require,module,exports){
+},{"../../model/proxy/ContextProxy.js":13,"../../model/vo/Context.js":14,"puremvc":2}],7:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 15/11/20.
  */
@@ -3307,6 +3105,7 @@ module.exports = puremvc.define
 
 var puremvc = require('puremvc').puremvc;
 var LoadContextCommand = require('./LoadContextCommand.js');
+var RemoveContextCommand = require('./RemoveContextCommand.js');
 
 module.exports = puremvc.define
 (
@@ -3323,6 +3122,7 @@ module.exports = puremvc.define
             cc.log('PrepControllerCommand execute');
 
             this.facade.registerCommand('LoadContextCommand', LoadContextCommand);
+            this.facade.registerCommand('RemoveContextCommand', RemoveContextCommand);
         }
     },
     // STATIC MEMBERS
@@ -3331,7 +3131,7 @@ module.exports = puremvc.define
     }
 );
 
-},{"./LoadContextCommand.js":10,"puremvc":3}],12:[function(require,module,exports){
+},{"./LoadContextCommand.js":6,"./RemoveContextCommand.js":10,"puremvc":2}],8:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 15/11/20.
  */
@@ -3362,7 +3162,7 @@ module.exports = puremvc.define
     }
 );
 
-},{"../../model/proxy/ContextProxy.js":16,"puremvc":3}],13:[function(require,module,exports){
+},{"../../model/proxy/ContextProxy.js":13,"puremvc":2}],9:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 15/11/20.
  */
@@ -3389,18 +3189,76 @@ module.exports = puremvc.define(
         NAME: 'PrepViewCommand'
     }
 );
-},{"puremvc":3}],14:[function(require,module,exports){
+},{"puremvc":2}],10:[function(require,module,exports){
+/**
+ * Created by guoxiangyu on 16/5/14.
+ */
+"use strict";
+
+var puremvc = require('puremvc').puremvc;
+var Context = require('../../model/vo/Context.js');
+var ContextProxy = require('../../model/proxy/ContextProxy.js');
+
+module.exports = puremvc.define
+(
+    // CLASS INFO
+    {
+        name: 'controller.command.RemoveContextCommand',
+        parent:puremvc.SimpleCommand
+    },
+    // INSTANCE MEMBERS
+    {
+        /** @override */
+        execute: function (notification)
+        {
+            cc.log('RemoveContextCommand execute');
+
+            var context = notification.getBody();
+
+            cc.assert(context, 'context should be undefined');
+            cc.assert(context instanceof Context, 'should be an instance of context');
+
+            var parentContext = context.parent;
+            if (!parentContext) return;
+
+            // 移除所有子节点
+            for (var i = 0; i < context.children.length; ++i) {
+                cc.facade.sendNotification('RemoveContextCommand', context.children[i]);
+            }
+
+            // Context从父节点移除
+            for (var i = 0; i < parentContext.children.length; ++i) {
+                var child = parentContext.children[i];
+                if (child.mediatorClass.NAME === context.mediatorClass.NAME) {
+                    parentContext.children.splice(i, 1);
+                    break;
+                }
+            }
+
+            // ViewComponent从父节点移除
+            var mediator = cc.facade.retrieveMediator(context.mediatorClass.NAME);
+            if (mediator) {
+                if (mediator.getViewComponent()) {
+                    mediator.getViewComponent().removeFromParent(true);
+                }
+                cc.facade.removeMediator(context.mediatorClass.NAME);
+            }
+        }
+    },
+    // STATIC MEMBERS
+    {
+        NAME: 'RemoveContextCommand'
+    }
+);
+
+},{"../../model/proxy/ContextProxy.js":13,"../../model/vo/Context.js":14,"puremvc":2}],11:[function(require,module,exports){
 /**
  * Created by admin on 16/3/14.
  */
 "use strict";
 
 var puremvc = require('puremvc').puremvc;
-var Layer1 = require('../../view/component/Layer1.js');
-var Layer2 = require('../../view/component/Layer2.js');
 var Scene1 = require('../../view/component/Scene1.js');
-var Layer1Mediator = require('../../view/mediator/Layer1Mediator.js');
-var Layer2Mediator = require('../../view/mediator/Layer2Mediator.js');
 var Scene1Mediator = require('../../view/mediator/Scene1Mediator.js');
 var Context = require('../../model/vo/Context.js');
 
@@ -3419,22 +3277,7 @@ module.exports = puremvc.define(
             var context = new Context();
             context.viewComponentClass = Scene1;
             context.mediatorClass = Scene1Mediator;
-            context.data = {x: 10, y: 20};
-
-            var childContent = new Context();
-            childContent.viewComponentClass = Layer1;
-            childContent.mediatorClass = Layer1Mediator;
-            childContent.data = {a: 100, b: 200};
-
-            context.addChild(childContent);
-            cc.facade.sendNotification('LoadContextCommand', context);
-
-            var layer2Context = new Context();
-            layer2Context.viewComponentClass = Layer2;
-            layer2Context.mediatorClass = Layer2Mediator;
-            layer2Context.data = {a0: 1000, b0: 2000};
-            cc.facade.sendNotification('LoadContextCommand', layer2Context);
-
+            cc.facade.sendNotification('LoadContextCommand', context, Constant.Change_Scene_Type.Replace);
         }
     },
     // STATIC MEMBERS
@@ -3442,7 +3285,7 @@ module.exports = puremvc.define(
         NAME: 'StartGameCommand'
     }
 );
-},{"../../model/vo/Context.js":17,"../../view/component/Layer1.js":18,"../../view/component/Layer2.js":19,"../../view/component/Scene1.js":20,"../../view/mediator/Layer1Mediator.js":21,"../../view/mediator/Layer2Mediator.js":22,"../../view/mediator/Scene1Mediator.js":23,"puremvc":3}],15:[function(require,module,exports){
+},{"../../model/vo/Context.js":14,"../../view/component/Scene1.js":19,"../../view/mediator/Scene1Mediator.js":24,"puremvc":2}],12:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 15/11/20.
  */
@@ -3477,7 +3320,7 @@ module.exports = puremvc.define(
         NAME: 'StartupCommand'
     }
 );
-},{"./PrepControllerCommand.js":11,"./PrepModelCommand.js":12,"./PrepViewCommand.js":13,"./StartGameCommand.js":14,"puremvc":3}],16:[function(require,module,exports){
+},{"./PrepControllerCommand.js":7,"./PrepModelCommand.js":8,"./PrepViewCommand.js":9,"./StartGameCommand.js":11,"puremvc":2}],13:[function(require,module,exports){
 /**
  * Created by admin on 16/3/13.
  */
@@ -3514,12 +3357,20 @@ module.exports = puremvc.define(
             return this.data[this.data.length - 1];
         },
 
+        getPreviousContext: function () {
+            return this.data[this.data.length - 2];
+        },
+
         cleanContext: function () {
             this.data = [];
         },
 
         getContextCount: function () {
             return this.data.length;
+        },
+
+        getRootContext: function () {
+            return this.data[0];
         }
     },
 
@@ -3527,7 +3378,7 @@ module.exports = puremvc.define(
     {
         NAME: 'ContextProxy'
     });
-},{"puremvc":3}],17:[function(require,module,exports){
+},{"puremvc":2}],14:[function(require,module,exports){
 /**
  * Created by admin on 16/3/13.
  */
@@ -3538,8 +3389,8 @@ var Context = cc.Class.extend({
         this.mediatorClass = null;
         this.viewComponentClass = null;
 
-        // viewComponent实例数据
-        this.data = {};
+        // viewComponent实例参数
+        this.data = data || {};
 
         this.parent = null;
         this.children = [];
@@ -3569,21 +3420,17 @@ var Context = cc.Class.extend({
 //Context.TYPE_LAYER = 2;
 
 module.exports = Context;
-},{}],18:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
 
-var ref = require('ref');
-
-var Layer1 = ref.views.BaseLayer.extend({
+var Layer1 = cc.Layer.extend({
     sprite:null,
     ctor:function (data) {
         //////////////////////////////
         // 1. super init first
-        this._super(data);
-
-        cc.log('data:', JSON.stringify(data), JSON.stringify(this.getData()));
+        this._super();
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -3595,41 +3442,29 @@ var Layer1 = ref.views.BaseLayer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-        var helloLabel = new cc.LabelTTF("Hello World", "Arial", 38);
+        var helloLabel = new cc.LabelTTF("Layer1 - " + data.layerId, "Arial", 38);
         // position the label on the center of the screen
-        helloLabel.x = size.width / 2;
-        helloLabel.y = size.height / 2 + 200;
+        helloLabel.x = Math.random() * (size.width - 20) | 0;
+        helloLabel.y = Math.random() * size.height | 0;
         // add the label as a child to this layer
         this.addChild(helloLabel, 5);
-
-        // add "HelloWorld" splash screen"
-        this.sprite = new cc.Sprite(res.HelloWorld_png);
-        this.sprite.attr({
-            x: size.width / 2,
-            y: size.height / 2
-        });
-        this.addChild(this.sprite, 0);
 
         return true;
     }
 });
 
 module.exports = Layer1;
-},{"ref":6}],19:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
 
-var ref = require('ref');
-
-var Layer2 = ref.views.BaseLayer.extend({
+var Layer2 = cc.Layer.extend({
     sprite:null,
     ctor:function (data) {
         //////////////////////////////
         // 1. super init first
-        this._super(data);
-
-        cc.log(JSON.stringify(this._data.a0));
+        this._super();
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -3641,48 +3476,164 @@ var Layer2 = ref.views.BaseLayer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-        var helloLabel = new cc.LabelTTF("It's layer 2!", "Arial", 38);
+        var helloLabel = new cc.LabelTTF("Layer2 - " + data.layerId, "Arial", 38);
         // position the label on the center of the screen
         helloLabel.x = size.width / 2;
-        helloLabel.y = size.height / 2 - 200;
+        helloLabel.y = size.height / 2 + Math.random() * size.height / 2;
         // add the label as a child to this layer
         this.addChild(helloLabel, 5);
-
-        // add "HelloWorld" splash screen"
-        //this.sprite = new cc.Sprite(res.HelloWorld_png);
-        //this.sprite.attr({
-        //    x: size.width / 2,
-        //    y: size.height / 2
-        //});
-        //this.addChild(this.sprite, 0);
 
         return true;
     }
 });
 
 module.exports = Layer2;
-},{"ref":6}],20:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
-var Layer1 = require('./Layer1.js');
+
+var Layer3 = cc.Layer.extend({
+    sprite:null,
+    ctor:function (data) {
+        //////////////////////////////
+        // 1. super init first
+        this._super();
+
+        /////////////////////////////
+        // 2. add a menu item with "X" image, which is clicked to quit the program
+        //    you may modify it.
+        // ask the window size
+        var size = cc.winSize;
+
+        /////////////////////////////
+        // 3. add your codes below...
+        // add a label shows "Hello World"
+        // create and initialize a label
+        var helloLabel = new cc.LabelTTF("Layer3 - " + data.layerId, "Arial", 38);
+        // position the label on the center of the screen
+        helloLabel.x = Math.random() * (size.width - 20) | 0;
+        helloLabel.y = Math.random() * size.height | 0;
+        // add the label as a child to this layer
+        this.addChild(helloLabel, 5);
+
+        return true;
+    }
+});
+
+module.exports = Layer3;
+},{}],18:[function(require,module,exports){
+/**
+ * Created by guoxiangyu on 16/5/14.
+ */
+
+var Layer4 = cc.Layer.extend({
+    sprite:null,
+    ctor:function (data) {
+        //////////////////////////////
+        // 1. super init first
+        this._super();
+
+        /////////////////////////////
+        // 2. add a menu item with "X" image, which is clicked to quit the program
+        //    you may modify it.
+        // ask the window size
+        var size = cc.winSize;
+
+        /////////////////////////////
+        // 3. add your codes below...
+        // add a label shows "Hello World"
+        // create and initialize a label
+        var helloLabel = new cc.LabelTTF("Layer4 - " + data.layerId, "Arial", 38);
+        // position the label on the center of the screen
+        helloLabel.x = Math.random() * (size.width - 20) | 0;
+        helloLabel.y = Math.random() * size.height | 0;
+        // add the label as a child to this layer
+        this.addChild(helloLabel, 5);
+
+        return true;
+    }
+});
+
+module.exports = Layer4;
+},{}],19:[function(require,module,exports){
+/**
+ * Created by guoxiangyu on 16/5/14.
+ */
+
+var Context = require('../../model/vo/Context.js');
+var ContextProxy = require('../../model/proxy/ContextProxy.js');
+var Layer1 = require('../../view/component/Layer1.js');
+var Layer1Mediator = require('../../view/mediator/Layer1Mediator.js');
+var Layer2 = require('../../view/component/Layer2.js');
+var Layer2Mediator = require('../../view/mediator/Layer2Mediator.js');
+var Layer3 = require('../../view/component/Layer3.js');
+var Layer3Mediator = require('../../view/mediator/Layer3Mediator.js');
+var Layer4 = require('../../view/component/Layer4.js');
+var Layer4Mediator = require('../../view/mediator/Layer4Mediator.js');
+
 
 var Scene1 = cc.Scene.extend({
+    ctor: function () {
+        this._super();
+
+        var size = cc.winSize;
+        var contextProxy = cc.facade.retrieveProxy(ContextProxy.NAME);
+
+        var addLayerBtn = new ccui.Button(res.HelloWorld_png);
+        addLayerBtn.addClickEventListener(function () {
+            cc.log('add layer button click');
+
+            var idx = Math.random() * 4 | 0;
+            var context = new Context();
+            context.mediatorClass = [Layer1Mediator, Layer2Mediator, Layer3Mediator, Layer4Mediator][idx];
+            context.viewComponentClass = [Layer1, Layer2, Layer3, Layer4][idx];
+            context.parent = contextProxy.getCurrentContext();
+            context.data = {layerId: Math.random() * 10 | 0};
+
+            cc.facade.sendNotification('LoadContextCommand', context);
+        });
+        addLayerBtn.setTitleText('Add layer');
+        addLayerBtn.setTitleFontSize(30);
+        addLayerBtn.attr({
+            x: size.width / 4,
+            y: size.height / 2
+        });
+        this.addChild(addLayerBtn);
+
+        var removeLayerBtn = new ccui.Button(res.HelloWorld_png);
+        removeLayerBtn.addClickEventListener(function () {
+            cc.log('remove layer button click');
+
+            var idx = Math.random() * 4 | 0;
+            var mediatorClass = [Layer1Mediator, Layer2Mediator, Layer3Mediator, Layer4Mediator][idx];
+            cc.log('remove ' + mediatorClass.NAME);
+            var mediator = cc.facade.retrieveMediator(mediatorClass.NAME);
+            if (mediator) {
+                cc.facade.sendNotification('RemoveContextCommand', mediator.context);
+            }
+        });
+        removeLayerBtn.setTitleText('Remove layer');
+        removeLayerBtn.setTitleFontSize(30);
+        removeLayerBtn.attr({
+            x: size.width * 3 / 4,
+            y: size.height / 2
+        });
+        this.addChild(removeLayerBtn);
+    },
+
     onEnter:function () {
         this._super();
-        //var layer = new Layer1();
-        //this.addChild(layer);
     }
 });
 
 module.exports = Scene1;
-},{"./Layer1.js":18}],21:[function(require,module,exports){
+},{"../../model/proxy/ContextProxy.js":13,"../../model/vo/Context.js":14,"../../view/component/Layer1.js":15,"../../view/component/Layer2.js":16,"../../view/component/Layer3.js":17,"../../view/component/Layer4.js":18,"../../view/mediator/Layer1Mediator.js":20,"../../view/mediator/Layer2Mediator.js":21,"../../view/mediator/Layer3Mediator.js":22,"../../view/mediator/Layer4Mediator.js":23}],20:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
 "use strict";
 
-var ref = require('ref');
 var puremvc = require('puremvc').puremvc;
 
 module.exports = puremvc.define
@@ -3724,13 +3675,12 @@ module.exports = puremvc.define
     }
 );
 
-},{"puremvc":3,"ref":6}],22:[function(require,module,exports){
+},{"puremvc":2}],21:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
 "use strict";
 
-var ref = require('ref');
 var puremvc = require('puremvc').puremvc;
 
 module.exports = puremvc.define
@@ -3772,7 +3722,101 @@ module.exports = puremvc.define
     }
 );
 
-},{"puremvc":3,"ref":6}],23:[function(require,module,exports){
+},{"puremvc":2}],22:[function(require,module,exports){
+/**
+ * Created by guoxiangyu on 16/5/14.
+ */
+"use strict";
+
+var puremvc = require('puremvc').puremvc;
+
+module.exports = puremvc.define
+(
+    // CLASS INFO
+    {
+        name: 'view.mediator.Layer3Mediator',
+        parent: puremvc.Mediator,
+        constructor: function() {
+            puremvc.Mediator.call(this, this.constructor.NAME);
+        }
+
+    },
+    // INSTANCE MEMBERS
+    {
+        /** @override */
+        listNotificationInterests: function () {
+            return [];
+        },
+
+        /** @override */
+        handleNotification: function (notification) {
+
+        },
+
+        /** @override */
+        onRegister: function () {
+
+        },
+
+        /** @override */
+        onRemove: function () {
+
+        }
+    },
+    // STATIC MEMBERS
+    {
+        NAME: 'Layer3Mediator'
+    }
+);
+
+},{"puremvc":2}],23:[function(require,module,exports){
+/**
+ * Created by guoxiangyu on 16/5/14.
+ */
+"use strict";
+
+var puremvc = require('puremvc').puremvc;
+
+module.exports = puremvc.define
+(
+    // CLASS INFO
+    {
+        name: 'view.mediator.Layer4Mediator',
+        parent: puremvc.Mediator,
+        constructor: function() {
+            puremvc.Mediator.call(this, this.constructor.NAME);
+        }
+
+    },
+    // INSTANCE MEMBERS
+    {
+        /** @override */
+        listNotificationInterests: function () {
+            return [];
+        },
+
+        /** @override */
+        handleNotification: function (notification) {
+
+        },
+
+        /** @override */
+        onRegister: function () {
+
+        },
+
+        /** @override */
+        onRemove: function () {
+
+        }
+    },
+    // STATIC MEMBERS
+    {
+        NAME: 'Layer4Mediator'
+    }
+);
+
+},{"puremvc":2}],24:[function(require,module,exports){
 /**
  * Created by guoxiangyu on 16/5/14.
  */
@@ -3819,4 +3863,4 @@ module.exports = puremvc.define
     }
 );
 
-},{"puremvc":3}]},{},[1]);
+},{"puremvc":2}]},{},[1]);

@@ -4,6 +4,7 @@
 "use strict";
 
 var puremvc = require('puremvc').puremvc;
+var Context = require('../../model/vo/Context.js');
 var ContextProxy = require('../../model/proxy/ContextProxy.js');
 
 module.exports = puremvc.define
@@ -27,6 +28,11 @@ module.exports = puremvc.define
 
             var parentContext = context.parent;
             if (!parentContext) return;
+
+            // 移除所有子节点
+            for (var i = 0; i < context.children.length; ++i) {
+                cc.facade.sendNotification('RemoveContextCommand', context.children[i]);
+            }
 
             // Context从父节点移除
             for (var i = 0; i < parentContext.children.length; ++i) {

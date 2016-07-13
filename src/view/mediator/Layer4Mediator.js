@@ -9,7 +9,7 @@ module.exports = puremvc.define
 (
     // CLASS INFO
     {
-        name: 'view.mediator.Layer2Mediator',
+        name: 'view.mediator.Layer4Mediator',
         parent: puremvc.Mediator,
         constructor: function() {
             puremvc.Mediator.call(this, this.constructor.NAME);
@@ -40,6 +40,6 @@ module.exports = puremvc.define
     },
     // STATIC MEMBERS
     {
-        NAME: 'Layer2Mediator'
+        NAME: 'Layer4Mediator'
     }
 );

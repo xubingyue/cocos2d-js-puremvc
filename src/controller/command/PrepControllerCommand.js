@@ -5,6 +5,7 @@
 
 var puremvc = require('puremvc').puremvc;
 var LoadContextCommand = require('./LoadContextCommand.js');
+var RemoveContextCommand = require('./RemoveContextCommand.js');
 
 module.exports = puremvc.define
 (
@@ -21,6 +22,7 @@ module.exports = puremvc.define
             cc.log('PrepControllerCommand execute');
 
             this.facade.registerCommand('LoadContextCommand', LoadContextCommand);
+            this.facade.registerCommand('RemoveContextCommand', RemoveContextCommand);
         }
     },
     // STATIC MEMBERS

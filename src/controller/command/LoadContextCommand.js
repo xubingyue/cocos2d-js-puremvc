@@ -27,25 +27,29 @@ module.exports = puremvc.define
 
             // 判断是否mediator已经存在，存在则删除该mediator之前的所有mediator
             var mediator = cc.facade.retrieveMediator(context.mediatorClass.NAME);
-            if (mediator && context.parent) {
-                for (var i = 0; i < context.parent.children; ++i) {
-                    var child = context.parent.children[i];
+            if (mediator && mediator.context.parent) {
+                for (var i = 0; i < mediator.context.parent.children.length; ++i) {
+                    var child = mediator.context.parent.children[i];
                     if (child.mediatorClass.NAME === context.mediatorClass.NAME) {
                         for (var j = 0; j <= i; ++j) {
-                            var childMediator = cc.facade.retrieveMediator(child.mediatorClass.NAME);
-                            if (childMediator.getViewComponent()) {
-                                childMediator.getViewComponent().removeFromParent(true);
+                            var removeChild = mediator.context.parent.children[j];
+                            var removeChildMediator = cc.facade.retrieveMediator(removeChild.mediatorClass.NAME);
+                            if (removeChildMediator.getViewComponent()) {
+                                removeChildMediator.getViewComponent().removeFromParent(true);
                             }
+                            cc.facade.removeMediator(removeChild.mediatorClass.NAME);
                         }
-                        context.parent.children.splice(0, i);
+                        mediator.context.parent.children.splice(0, i + 1);
                         break;
                     }
                 }
             }
 
-            // 获取/创建viewComponent
+            //
             mediator = new context.mediatorClass();
-            mediator.setViewComponent(new context.viewComponentClass(context.data));
+            mediator.context = context;
+            var viewComponent = new context.viewComponentClass(context.data);
+            mediator.setViewComponent(viewComponent);
             cc.facade.registerMediator(mediator);
 
             // 加载子控件
@@ -69,18 +73,21 @@ module.exports = puremvc.define
                     cc.director.runScene(viewComponent);
                 }
             } else {
-                // 获取父亲Context
-                var parentContext = context.parent;
+                //// 获取父亲Context
+                //var parentContext = context.parent;
                 //if (!parentContext) {
                 //    parentContext = contextProxy.getCurrentContext();
                 //    context.parent = parentContext;
                 //}
 
                 // 添加到父节点
+                var parentContext = context.parent;
                 var parentMediator = cc.facade.retrieveMediator(parentContext.mediatorClass.NAME);
                 if (parentMediator && parentMediator.getViewComponent()) {
                     parentMediator.getViewComponent().addChild(viewComponent);
                 }
+
+                parentContext.children.push(context);
             }
         }
     },
